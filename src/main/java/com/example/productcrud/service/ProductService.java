@@ -5,9 +5,10 @@ package com.example.productcrud.service;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,8 +20,12 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> findAllByOwner(User owner) {
-        return productRepository.findByOwner(owner);
+    public Page<Product> findAllByOwner(User owner, Pageable pageable) {
+        return productRepository.findByOwner(owner, pageable);
+    }
+
+    public Page<Product> searchProducts(User owner, String keyword, Pageable pageable) {
+        return productRepository.findByOwnerAndNameContainingIgnoreCase(owner, keyword, pageable);
     }
 
 
@@ -38,6 +43,8 @@ public class ProductService {
         productRepository.findByIdAndOwner(id, owner)
                 .ifPresent(productRepository::delete);
     }
+<<<<<<< HEAD
+=======
 
 
     public List<Product> searchProducts(User owner, String keyword, Long categoryId) {
@@ -48,4 +55,5 @@ public class ProductService {
 
         return productRepository.searchAndFilterByOwner(owner, keyword, categoryId);
     }
+>>>>>>> 9caa1780412651a943f017901a7572bfb276c944
 }

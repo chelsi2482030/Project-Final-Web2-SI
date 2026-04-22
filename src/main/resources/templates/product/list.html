@@ -23,6 +23,18 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
+<<<<<<< HEAD
+    <!-- 🔍 SEARCH -->
+    <form method="get" th:action="@{/products}" class="mb-3 d-flex">
+        <input type="text" name="keyword" th:value="${keyword}"
+               class="form-control me-2" placeholder="Cari produk...">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- ✅ TOTAL DATA (FIX) -->
+    <p class="text-muted">
+        Total produk: <strong th:text="${totalItems}">0</strong>
+=======
     <!-- 🔍 SEARCH & FILTER -->
     <form method="get" th:action="@{/products}" class="row g-2 mb-3">
 
@@ -58,6 +70,7 @@
     <!-- Product Count -->
     <p class="text-muted">
         Total produk: <strong th:text="${#lists.size(products)}">0</strong>
+>>>>>>> 9caa1780412651a943f017901a7572bfb276c944
     </p>
 
     <!-- Product Table -->
@@ -100,9 +113,43 @@
 
     <!-- Empty State -->
     <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
+<<<<<<< HEAD
+        <p class="text-muted fs-5">Belum ada produk.</p>
+        <a th:href="@{/products/new}" class="btn btn-primary">Tambah Produk Pertama</a>
+    </div>
+
+    <div class="mt-4 text-center" th:if="${totalPages > 1}">
+
+        <!-- Previous -->
+        <a th:if="${currentPage > 0}"
+           th:href="@{/products(page=${currentPage - 1}, keyword=${keyword})}"
+           class="btn btn-outline-primary btn-sm me-1">
+            Previous
+        </a>
+
+        <!-- Nomor halaman -->
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:href="@{/products(page=${i}, keyword=${keyword})}"
+           th:text="${i + 1}"
+           class="btn btn-sm me-1"
+           th:classappend="${i == currentPage} ? 'btn-primary' : 'btn-outline-primary'">
+        </a>
+    </span>
+
+        <!-- Next -->
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/products(page=${currentPage + 1}, keyword=${keyword})}"
+           class="btn btn-outline-primary btn-sm ms-1">
+            Next
+        </a>
+
+    </div>
+
+=======
         <p class="text-muted fs-5">Tidak ada produk 😢</p>
         <a th:href="@{/products/new}" class="btn btn-primary">Tambah Produk Pertama</a>
     </div>
+>>>>>>> 9caa1780412651a943f017901a7572bfb276c944
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
