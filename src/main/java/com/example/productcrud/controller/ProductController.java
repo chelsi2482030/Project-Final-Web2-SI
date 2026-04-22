@@ -1,8 +1,6 @@
 package com.example.productcrud.controller;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+
 /* chelsi */
 >>>>>>> 8ba328e (fix merge)
 import com.example.productcrud.model.Category;
