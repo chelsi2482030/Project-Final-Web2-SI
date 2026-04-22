@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Dashboard</h1>
+
+    <!-- TAMBAHAN GRID -->
+    <div class="dashboard-grid">
+
+        <!-- CARD 1 -->
+        <div class="card dashboard-card">
+            <h3>Total Produk</h3>
+            <h2 th:text="${totalProduct}">0</h2>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="card dashboard-card">
+            <h3>Total User</h3>
+            <h2 th:text="${totalUser}">0</h2>
+        </div>
+
+    </div>
+
+    <br>
+
+    <!-- TOMBOL -->
+    <a href="/" class="btn btn-primary btn-dashboard">Ke Halaman Produk</a>
+</div>
+
+</body>
+</html>

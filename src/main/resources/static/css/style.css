@@ -1,3 +1,4 @@
+/* GLOBAL STYLE */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
@@ -34,4 +35,51 @@ body {
 
 .badge {
     font-size: 0.85em;
+}
+
+/* DASHBOARD STYLE */
+
+/* Judul dashboard */
+h1 {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Card dashboard */
+.dashboard-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Angka statistik */
+.dashboard-card h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+/* Label */
+.dashboard-card p {
+    margin: 0;
+    color: #6c757d;
+}
+
+/* Container grid dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Tombol dashboard */
+.btn-dashboard {
+    padding: 10px 20px;
+    border-radius: 8px;
 }
