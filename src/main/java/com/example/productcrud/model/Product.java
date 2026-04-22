@@ -23,8 +23,9 @@ public class Product {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
+    // FIX: Category harus RELASI (bukan enum)
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
     private long price;
@@ -39,6 +40,7 @@ public class Product {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
 
+    // FIX: owner sudah benar (ManyToOne)
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -129,6 +131,7 @@ public class Product {
     public void setOwner(User owner) {
         this.owner = owner;
     }
+<<<<<<< HEAD
 }
 =======
     private String name;
@@ -164,3 +167,6 @@ public class Product {
     public void setOwner(User owner) { this.owner = owner; }
 }
 >>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
+=======
+}
+>>>>>>> 39856b1 (chelsi menambahkan)

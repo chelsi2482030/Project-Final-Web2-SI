@@ -21,16 +21,29 @@ public class ProductService {
         return productRepository.findByOwner(owner);
     }
 
+
     public Optional<Product> findByIdAndOwner(Long id, User owner) {
         return productRepository.findByIdAndOwner(id, owner);
     }
+
 
     public Product save(Product product) {
         return productRepository.save(product);
     }
 
+
     public void deleteByIdAndOwner(Long id, User owner) {
         productRepository.findByIdAndOwner(id, owner)
-                .ifPresent(product -> productRepository.delete(product));
+                .ifPresent(productRepository::delete);
+    }
+
+
+    public List<Product> searchProducts(User owner, String keyword, Long categoryId) {
+
+        if (keyword != null && keyword.isBlank()) {
+            keyword = null;
+        }
+
+        return productRepository.searchAndFilterByOwner(owner, keyword, categoryId);
     }
 }

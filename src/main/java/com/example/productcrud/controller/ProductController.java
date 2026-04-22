@@ -28,10 +28,14 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductController(ProductService productService, UserRepository userRepository) {
+    public ProductController(ProductService productService,
+                             UserRepository userRepository,
+                             CategoryRepository categoryRepository) {
         this.productService = productService;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     private User getCurrentUser(UserDetails userDetails) {
@@ -44,10 +48,24 @@ public class ProductController {
         return "redirect:/products";
     }
 
+    // 🔍 LIST PRODUCT + SEARCH + FILTER
     @GetMapping("/products")
-    public String listProducts(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String listProducts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long category,
+            Model model) {
+
         User currentUser = getCurrentUser(userDetails);
-        model.addAttribute("products", productService.findAllByOwner(currentUser));
+
+        var products = productService.searchProducts(currentUser, keyword, category);
+        var categories = categoryRepository.findAll();
+
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categories);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedCategory", category);
+
         return "product/list";
     }
 
@@ -95,7 +113,6 @@ public class ProductController {
         User currentUser = getCurrentUser(userDetails);
 
         if (product.getId() != null) {
-            // Edit: pastikan produk milik user ini
             boolean isOwner = productService.findByIdAndOwner(product.getId(), currentUser).isPresent();
             if (!isOwner) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
@@ -173,7 +190,11 @@ public class ProductController {
         return "redirect:/products";
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 =======
 }
 >>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
+=======
+}
+>>>>>>> 39856b1 (chelsi menambahkan)
