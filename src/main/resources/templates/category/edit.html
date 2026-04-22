@@ -1,0 +1,10 @@
+<h2>Edit</h2>
+
+<form action="/categories/update" method="post">
+  <input type="hidden" name="id" th:value="${category.id}">
+
+  Name: <input type="text" name="name" th:value="${category.name}"><br>
+  Desc: <input type="text" name="description" th:value="${category.description}"><br>
+
+  <button type="submit">Update</button>
+</form>
