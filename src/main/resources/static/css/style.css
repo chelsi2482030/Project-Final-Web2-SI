@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 /* bela */
+=======
+>>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
@@ -36,6 +39,7 @@ body {
 .badge {
     font-size: 0.85em;
 }
+<<<<<<< HEAD
 
 /* DASHBOARD STYLE */
 
@@ -83,3 +87,5 @@ h1 {
     padding: 10px 20px;
     border-radius: 8px;
 }
+=======
+>>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659

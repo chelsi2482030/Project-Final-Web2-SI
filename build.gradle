@@ -8,9 +8,13 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
+<<<<<<< HEAD
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+=======
+    sourceCompatibility = '25'
+>>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
 }
 
 repositories {
@@ -18,6 +22,7 @@ repositories {
 }
 
 dependencies {
+<<<<<<< HEAD
     // WEB & TEMPLATE
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -34,9 +39,29 @@ dependencies {
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
     // TEST
+=======
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // JPA & PostgreSQL
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Load .env file
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+>>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659

@@ -1,0 +1,19 @@
+<h2>Category List</h2>
+
+<a href="/categories/add">Tambah</a>
+
+<table border="1">
+    <tr>
+        <th>ID</th><th>Name</th><th>Desc</th><th>Action</th>
+    </tr>
+
+    <tr th:each="c : ${categories}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.name}"></td>
+        <td th:text="${c.description}"></td>
+        <td>
+            <a th:href="@{/categories/edit/{id}(id=${c.id})}">Edit</a>
+            <a th:href="@{/categories/delete/{id}(id=${c.id})}">Delete</a>
+        </td>
+    </tr>
+</table>
