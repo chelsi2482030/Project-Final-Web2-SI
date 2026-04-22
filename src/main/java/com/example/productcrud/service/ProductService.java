@@ -1,5 +1,7 @@
 package com.example.productcrud.service;
 
+/*chelsi*/
+
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
@@ -26,16 +28,32 @@ public class ProductService {
         return productRepository.findByOwnerAndNameContainingIgnoreCase(owner, keyword, pageable);
     }
 
+
     public Optional<Product> findByIdAndOwner(Long id, User owner) {
         return productRepository.findByIdAndOwner(id, owner);
     }
+
 
     public Product save(Product product) {
         return productRepository.save(product);
     }
 
+
     public void deleteByIdAndOwner(Long id, User owner) {
         productRepository.findByIdAndOwner(id, owner)
                 .ifPresent(productRepository::delete);
     }
+<<<<<<< HEAD
+=======
+
+
+    public List<Product> searchProducts(User owner, String keyword, Long categoryId) {
+
+        if (keyword != null && keyword.isBlank()) {
+            keyword = null;
+        }
+
+        return productRepository.searchAndFilterByOwner(owner, keyword, categoryId);
+    }
+>>>>>>> 9caa1780412651a943f017901a7572bfb276c944
 }

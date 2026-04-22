@@ -23,6 +23,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
+<<<<<<< HEAD
     <!-- 🔍 SEARCH -->
     <form method="get" th:action="@{/products}" class="mb-3 d-flex">
         <input type="text" name="keyword" th:value="${keyword}"
@@ -33,6 +34,43 @@
     <!-- ✅ TOTAL DATA (FIX) -->
     <p class="text-muted">
         Total produk: <strong th:text="${totalItems}">0</strong>
+=======
+    <!-- 🔍 SEARCH & FILTER -->
+    <form method="get" th:action="@{/products}" class="row g-2 mb-3">
+
+        <!-- Search -->
+        <div class="col-md-4">
+            <input type="text"
+                   name="keyword"
+                   class="form-control"
+                   placeholder="Cari nama produk..."
+                   th:value="${keyword}">
+        </div>
+
+        <!-- Filter Category -->
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="">Semua Kategori</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.id}"
+                        th:text="${cat.name}"
+                        th:selected="${cat.id == selectedCategory}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Button -->
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a th:href="@{/products}" class="btn btn-secondary">Reset</a>
+        </div>
+
+    </form>
+
+    <!-- Product Count -->
+    <p class="text-muted">
+        Total produk: <strong th:text="${#lists.size(products)}">0</strong>
+>>>>>>> 9caa1780412651a943f017901a7572bfb276c944
     </p>
 
     <!-- Product Table -->
@@ -75,6 +113,7 @@
 
     <!-- Empty State -->
     <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
+<<<<<<< HEAD
         <p class="text-muted fs-5">Belum ada produk.</p>
         <a th:href="@{/products/new}" class="btn btn-primary">Tambah Produk Pertama</a>
     </div>
@@ -106,6 +145,11 @@
 
     </div>
 
+=======
+        <p class="text-muted fs-5">Tidak ada produk 😢</p>
+        <a th:href="@{/products/new}" class="btn btn-primary">Tambah Produk Pertama</a>
+    </div>
+>>>>>>> 9caa1780412651a943f017901a7572bfb276c944
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
