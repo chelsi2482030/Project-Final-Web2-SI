@@ -3,7 +3,6 @@ package com.example.productcrud.controller;
 
 /* chelsi */
 >>>>>>> 8ba328e (fix merge)
-import com.example.productcrud.model.Category;
 =======
 >>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
 import com.example.productcrud.model.Product;
@@ -14,7 +13,6 @@ import com.example.productcrud.service.ProductService;
 import java.time.LocalDate;
 =======
 
-import java.time.LocalDate;
 import java.util.Locale;
 
 >>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659

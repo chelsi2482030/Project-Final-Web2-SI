@@ -1,6 +1,5 @@
 package com.example.productcrud.service;
 
-import com.example.productcrud.model.Category;
 import com.example.productcrud.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 

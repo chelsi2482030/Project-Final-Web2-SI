@@ -1,15 +1,10 @@
 package com.example.productcrud.model;
 
-<<<<<<< HEAD
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
-=======
-import jakarta.persistence.*;
-import java.time.LocalDate;
->>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
 
 @Entity
 @Table(name = "products")
@@ -19,11 +14,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-<<<<<<< HEAD
     @Column(nullable = false, length = 200)
     private String name;
 
-    // FIX: Category harus RELASI (bukan enum)
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -40,7 +33,6 @@ public class Product {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
 
-    // FIX: owner sudah benar (ManyToOne)
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -131,42 +123,4 @@ public class Product {
     public void setOwner(User owner) {
         this.owner = owner;
     }
-<<<<<<< HEAD
 }
-=======
-    private String name;
-    private double price;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    private LocalDate createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User owner;
-
-    // GETTER SETTER
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
-
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
-
-    public LocalDate getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
-
-    public User getOwner() { return owner; }
-    public void setOwner(User owner) { this.owner = owner; }
-}
->>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
-=======
-}
->>>>>>> 39856b1 (chelsi menambahkan)

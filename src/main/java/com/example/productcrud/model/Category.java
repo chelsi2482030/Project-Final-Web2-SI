@@ -1,23 +1,6 @@
 package com.example.productcrud.model;
 
-<<<<<<< HEAD
-public enum Category {
-    ELEKTRONIK("Elektronik"),
-    BUKU("Buku"),
-    MAKANAN("Makanan"),
-    PAKAIAN("Pakaian");
 
-    private final String displayName;
-
-    Category(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-}
-=======
 import jakarta.persistence.*;
 
 @Entity
@@ -56,4 +39,4 @@ public class Category {
         this.description = description;
     }
 }
->>>>>>> 3f3a164bbfbeea432ca1fff3d3b20c60e52e0659
+
