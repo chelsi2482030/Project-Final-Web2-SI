@@ -1,4 +1,4 @@
-/* bela */
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -10,7 +10,7 @@
 <div class="container">
     <h1>Dashboard</h1>
 
-    <!-- TAMBAHAN GRID -->
+    <!-- GRID -->
     <div class="dashboard-grid">
 
         <!-- CARD 1 -->
@@ -25,11 +25,17 @@
             <h2 th:text="${totalUser}">0</h2>
         </div>
 
+
+        <div class="card dashboard-card">
+            <h3>Total Category</h3>
+            <h2 th:text="${totalCategory}">0</h2>
+        </div>
+
     </div>
 
     <br>
 
-    <!-- TOMBOL -->
+    <!-- BUTTON -->
     <a href="/" class="btn btn-primary btn-dashboard">Ke Halaman Produk</a>
 </div>
 

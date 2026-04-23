@@ -2,15 +2,19 @@ package com.example.productcrud.controller;
 
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
-import com.example.productcrud.model.Category;
 import com.example.productcrud.repository.UserRepository;
 import com.example.productcrud.repository.CategoryRepository;
 import com.example.productcrud.service.ProductService;
 
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,17 +45,28 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    // LIST PRODUCT + SEARCH + FILTER
+    // =========================
+    // LIST PRODUCT + SEARCH + FILTER + PAGINATION (FIXED)
+    // =========================
     @GetMapping("/products")
     public String listProducts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long category,
+            @PageableDefault(size = 5) Pageable pageable,
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
 
-        var products = productService.searchProducts(currentUser, keyword, category);
+        Page<Product> products;
+
+        // kondisi: ada search/filter atau tidak
+        if ((keyword != null && !keyword.isBlank()) || category != null) {
+            products = productService.searchProducts(currentUser, keyword, category, pageable);
+        } else {
+            products = productService.findAllByOwner(currentUser, pageable);
+        }
+
         var categories = categoryRepository.findAll();
 
         model.addAttribute("products", products);
@@ -62,6 +77,9 @@ public class ProductController {
         return "product/list";
     }
 
+    // =========================
+    // DETAIL
+    // =========================
     @GetMapping("/products/{id}")
     public String detailProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
@@ -82,6 +100,9 @@ public class ProductController {
                 });
     }
 
+    // =========================
+    // CREATE FORM
+    // =========================
     @GetMapping("/products/new")
     public String showCreateForm(Model model) {
         Product product = new Product();
@@ -93,6 +114,9 @@ public class ProductController {
         return "product/form";
     }
 
+    // =========================
+    // SAVE
+    // =========================
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
                               @AuthenticationPrincipal UserDetails userDetails,
@@ -101,7 +125,10 @@ public class ProductController {
         User currentUser = getCurrentUser(userDetails);
 
         if (product.getId() != null) {
-            boolean isOwner = productService.findByIdAndOwner(product.getId(), currentUser).isPresent();
+            boolean isOwner = productService
+                    .findByIdAndOwner(product.getId(), currentUser)
+                    .isPresent();
+
             if (!isOwner) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
                 return "redirect:/products";
@@ -115,6 +142,9 @@ public class ProductController {
         return "redirect:/products";
     }
 
+    // =========================
+    // EDIT
+    // =========================
     @GetMapping("/products/{id}/edit")
     public String showEditForm(@PathVariable Long id,
                                @AuthenticationPrincipal UserDetails userDetails,
@@ -136,6 +166,9 @@ public class ProductController {
                 });
     }
 
+    // =========================
+    // DELETE
+    // =========================
     @PostMapping("/products/{id}/delete")
     public String deleteProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
