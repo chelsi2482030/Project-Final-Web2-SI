@@ -29,30 +29,49 @@ public class CategoryController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("category") Category category) {
-        categoryService.save(category);
-        return "redirect:/categories";
+    public String save(@ModelAttribute("category") Category category,
+                       Model model) {
+        try {
+            categoryService.save(category);
+            return "redirect:/categories";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "category/add";
+        }
     }
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable("id") Long id, Model model) {
-        Category category = categoryService.findById(id);
-        if (category != null) {
-            model.addAttribute("category", category);
+        try {
+            model.addAttribute("category", categoryService.findById(id));
             return "category/edit";
+        } catch (Exception e) {
+            return "redirect:/categories";
         }
-        return "redirect:/categories";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute("category") Category category) {
-        categoryService.save(category);
-        return "redirect:/categories";
+    public String update(@ModelAttribute("category") Category category,
+                         Model model) {
+        try {
+            categoryService.save(category);
+            return "redirect:/categories";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "category/edit";
+        }
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
-        categoryService.delete(id);
+    public String delete(@PathVariable("id") Long id,
+                         Model model) {
+        try {
+            categoryService.delete(id);
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("categories", categoryService.findAll());
+            return "category/list";
+        }
         return "redirect:/categories";
     }
 }

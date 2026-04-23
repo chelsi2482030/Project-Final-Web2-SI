@@ -1,10 +1,10 @@
 package com.example.productcrud.model;
 
-
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "category") // opsional tapi bagus
+@Table(name = "category")
 public class Category {
 
     @Id
@@ -14,29 +14,20 @@ public class Category {
     private String name;
     private String description;
 
+    // 🔥 TAMBAHAN RELASI
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
+
     // Getter & Setter
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public List<Product> getProducts() { return products; }
+    public void setProducts(List<Product> products) { this.products = products; }
 }
-

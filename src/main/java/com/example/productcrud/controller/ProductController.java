@@ -2,11 +2,13 @@ package com.example.productcrud.controller;
 
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
+import com.example.productcrud.model.Category;
 import com.example.productcrud.repository.UserRepository;
 import com.example.productcrud.repository.CategoryRepository;
 import com.example.productcrud.service.ProductService;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,17 +38,56 @@ public class ProductController {
     }
 
     private User getCurrentUser(UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new RuntimeException("User belum login");
+        }
+
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
     }
 
+    // =========================
+    // DASHBOARD (HOME)
+    // =========================
     @GetMapping("/")
-    public String index() {
-        return "redirect:/products";
+    public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+
+        User currentUser = getCurrentUser(userDetails);
+
+        Page<Product> page = productService.findAllByOwner(currentUser, Pageable.unpaged());
+        List<Product> products = page.getContent();
+
+        long totalProduk = page.getTotalElements();
+
+        double inventoryValue = products.stream()
+                .mapToDouble(p -> p.getPrice() * p.getStock())
+                .sum();
+
+        long aktif = products.stream()
+                .filter(Product::isActive)
+                .count();
+
+        long nonAktif = totalProduk - aktif;
+
+        List<Product> lowStock = products.stream()
+                .filter(p -> p.getStock() < 5)
+                .toList();
+
+        model.addAttribute("totalProduk", totalProduk);
+        model.addAttribute("inventoryValue", inventoryValue);
+        model.addAttribute("aktif", aktif);
+        model.addAttribute("nonAktif", nonAktif);
+        model.addAttribute("lowStockProducts", lowStock);
+
+        return "dashboard";
     }
 
     // =========================
-    // LIST PRODUCT + SEARCH + FILTER + PAGINATION (FIXED)
+    // LIST PRODUCT
     // =========================
     @GetMapping("/products")
     public String listProducts(
@@ -60,17 +101,14 @@ public class ProductController {
 
         Page<Product> products;
 
-        // kondisi: ada search/filter atau tidak
         if ((keyword != null && !keyword.isBlank()) || category != null) {
             products = productService.searchProducts(currentUser, keyword, category, pageable);
         } else {
             products = productService.findAllByOwner(currentUser, pageable);
         }
 
-        var categories = categoryRepository.findAll();
-
         model.addAttribute("products", products);
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("keyword", keyword);
         model.addAttribute("selectedCategory", category);
 
@@ -78,30 +116,7 @@ public class ProductController {
     }
 
     // =========================
-    // DETAIL
-    // =========================
-    @GetMapping("/products/{id}")
-    public String detailProduct(@PathVariable Long id,
-                                @AuthenticationPrincipal UserDetails userDetails,
-                                Model model,
-                                RedirectAttributes redirectAttributes) {
-
-        User currentUser = getCurrentUser(userDetails);
-
-        return productService.findByIdAndOwner(id, currentUser)
-                .map(product -> {
-                    model.addAttribute("product", product);
-                    return "product/detail";
-                })
-                .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage",
-                            "Produk tidak ditemukan.");
-                    return "redirect:/products";
-                });
-    }
-
-    // =========================
-    // CREATE FORM
+    // CREATE
     // =========================
     @GetMapping("/products/new")
     public String showCreateForm(Model model) {
@@ -115,55 +130,24 @@ public class ProductController {
     }
 
     // =========================
-    // SAVE
+    // SAVE (FIX CATEGORY)
     // =========================
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
+                              @RequestParam("category.id") Long categoryId,
                               @AuthenticationPrincipal UserDetails userDetails,
                               RedirectAttributes redirectAttributes) {
 
         User currentUser = getCurrentUser(userDetails);
 
-        if (product.getId() != null) {
-            boolean isOwner = productService
-                    .findByIdAndOwner(product.getId(), currentUser)
-                    .isPresent();
-
-            if (!isOwner) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
-                return "redirect:/products";
-            }
-        }
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        product.setCategory(category);
 
         product.setOwner(currentUser);
         productService.save(product);
 
         redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil disimpan!");
         return "redirect:/products";
-    }
-
-    // =========================
-    // EDIT
-    // =========================
-    @GetMapping("/products/{id}/edit")
-    public String showEditForm(@PathVariable Long id,
-                               @AuthenticationPrincipal UserDetails userDetails,
-                               Model model,
-                               RedirectAttributes redirectAttributes) {
-
-        User currentUser = getCurrentUser(userDetails);
-
-        return productService.findByIdAndOwner(id, currentUser)
-                .map(product -> {
-                    model.addAttribute("product", product);
-                    model.addAttribute("categories", categoryRepository.findAll());
-                    return "product/form";
-                })
-                .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage",
-                            "Produk tidak ditemukan.");
-                    return "redirect:/products";
-                });
     }
 
     // =========================

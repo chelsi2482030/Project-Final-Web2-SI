@@ -20,14 +20,25 @@ public class CategoryService {
     }
 
     public Category findById(Long id) {
-        return categoryRepository.findById(id).orElse(null);
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category tidak ditemukan"));
     }
 
     public void save(Category category) {
+        if (category.getName() == null || category.getName().isBlank()) {
+            throw new RuntimeException("Nama kategori wajib diisi");
+        }
         categoryRepository.save(category);
     }
 
     public void delete(Long id) {
-        categoryRepository.deleteById(id);
+        Category category = findById(id);
+
+        // 🔥 CEGAH DELETE kalau masih dipakai product
+        if (category.getProducts() != null && !category.getProducts().isEmpty()) {
+            throw new RuntimeException("Kategori masih digunakan oleh produk!");
+        }
+
+        categoryRepository.delete(category);
     }
 }

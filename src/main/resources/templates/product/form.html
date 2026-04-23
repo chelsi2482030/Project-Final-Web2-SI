@@ -1,69 +1,100 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header}">
-</head>
+<head th:replace="~{fragments/layout :: header}"></head>
+
 <body>
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <h2 th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'" class="mb-4">Form Produk</h2>
 
+            <!-- TITLE -->
+            <h2 class="mb-4"
+                th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'">
+            </h2>
+
+            <!-- FORM -->
             <form th:action="@{/products/save}" th:object="${product}" method="post">
 
+                <!-- hidden -->
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{createdAt}">
+                <input type="hidden" th:field="*{price}">
 
-                <!-- Nama Produk -->
+                <!-- NAMA -->
                 <div class="mb-3">
                     <label class="form-label">Nama Produk</label>
-                    <input type="text" class="form-control" th:field="*{name}"
-                           placeholder="Masukkan nama produk" required>
+                    <input type="text"
+                           class="form-control"
+                           th:field="*{name}"
+                           placeholder="Masukkan nama produk"
+                           required>
                 </div>
 
-                <!-- Kategori -->
+                <!-- CATEGORY (FIX PENTING) -->
                 <div class="mb-3">
                     <label class="form-label">Kategori</label>
-                    <select class="form-select" th:field="*{category}" required>
+                    <select class="form-select" name="category.id" required>
+
                         <option value="">-- Pilih Kategori --</option>
+
                         <option th:each="cat : ${categories}"
-                                th:value="${cat}"
-                                th:text="${cat.displayName}">
+                                th:value="${cat.id}"
+                                th:text="${cat.name}"
+                                th:selected="${product.category != null && cat.id == product.category.id}">
                         </option>
+
                     </select>
                 </div>
 
-                <!-- Harga -->
+                <!-- HARGA -->
                 <div class="mb-3">
                     <label class="form-label">Harga</label>
-                    <input type="hidden" th:field="*{price}">
-                    <input type="text" class="form-control" id="priceDisplay"
-                           placeholder="Masukkan harga produk" required>
+
+                    <input type="text"
+                           id="priceDisplay"
+                           class="form-control"
+                           placeholder="Masukkan harga"
+                           required>
                 </div>
 
-                <!-- Stok -->
+                <!-- STOK -->
                 <div class="mb-3">
                     <label class="form-label">Stok</label>
-                    <input type="number" class="form-control" th:field="*{stock}" min="0" required>
+                    <input type="number"
+                           class="form-control"
+                           th:field="*{stock}"
+                           min="0"
+                           required>
                 </div>
 
-                <!-- Deskripsi -->
+                <!-- DESKRIPSI -->
                 <div class="mb-3">
                     <label class="form-label">Deskripsi</label>
-                    <textarea class="form-control" th:field="*{description}" rows="3"></textarea>
+                    <textarea class="form-control"
+                              th:field="*{description}"
+                              rows="3">
+                    </textarea>
                 </div>
 
-                <!-- Aktif -->
+                <!-- STATUS -->
                 <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" th:field="*{active}">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           th:field="*{active}">
                     <label class="form-check-label">Produk Aktif</label>
                 </div>
 
-                <!-- Button -->
+                <!-- BUTTON -->
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Simpan Produk</button>
-                    <a th:href="@{/products}" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary">
+                        Simpan
+                    </button>
+
+                    <a th:href="@{/products}" class="btn btn-secondary">
+                        Batal
+                    </a>
                 </div>
 
             </form>
@@ -73,29 +104,27 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
-<!-- PRICE SCRIPT (SUDAH DIPERBAIKI AMAN) -->
+<!-- SCRIPT FORMAT HARGA -->
 <script>
     const priceHidden = document.querySelector('input[name="price"]');
     const priceDisplay = document.getElementById('priceDisplay');
 
-    function formatThousand(value) {
-        return Number(value || 0).toLocaleString('id-ID');
+    function formatRupiah(value) {
+        return new Intl.NumberFormat('id-ID').format(value);
     }
 
-    // init value
+    // SET VALUE SAAT EDIT
     if (priceHidden && priceHidden.value) {
-        priceDisplay.value = formatThousand(priceHidden.value);
+        priceDisplay.value = formatRupiah(priceHidden.value);
     }
 
-    // input sync
+    // HANDLE INPUT
     priceDisplay.addEventListener('input', function () {
-        const raw = this.value.replace(/\./g, '').replace(/\D/g, '');
+        let raw = this.value.replace(/\D/g, '');
 
-        if (priceHidden) {
-            priceHidden.value = raw || 0;
-        }
+        priceHidden.value = raw || 0;
 
-        this.value = raw ? formatThousand(raw) : '';
+        this.value = raw ? formatRupiah(raw) : '';
     });
 </script>
 

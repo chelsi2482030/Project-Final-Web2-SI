@@ -1,42 +1,53 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/layout :: header}"></head>
 <body>
 
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
 <div class="container">
-    <h1>Dashboard</h1>
+    <h2 class="mb-4">Dashboard Overview</h2>
 
-    <!-- GRID -->
-    <div class="dashboard-grid">
+    <div class="row">
 
-        <!-- CARD 1 -->
-        <div class="card dashboard-card">
-            <h3>Total Produk</h3>
-            <h2 th:text="${totalProduct}">0</h2>
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5>Total Produk</h5>
+                <h3 th:text="${totalProduk}"></h3>
+            </div>
         </div>
 
-        <!-- CARD 2 -->
-        <div class="card dashboard-card">
-            <h3>Total User</h3>
-            <h2 th:text="${totalUser}">0</h2>
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5>Inventory Value</h5>
+                <h3>Rp <span th:text="${#numbers.formatDecimal(inventoryValue,0,'COMMA',0,'POINT')}"></span></h3>
+            </div>
         </div>
 
-
-        <div class="card dashboard-card">
-            <h3>Total Category</h3>
-            <h2 th:text="${totalCategory}">0</h2>
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5>Status</h5>
+                <p>
+                    <span th:text="${aktif}"></span> Aktif |
+                    <span th:text="${nonAktif}"></span> Nonaktif
+                </p>
+            </div>
         </div>
 
     </div>
 
-    <br>
+    <hr>
 
-    <!-- BUTTON -->
-    <a href="/" class="btn btn-primary btn-dashboard">Ke Halaman Produk</a>
+    <h5>⚠ Stok Menipis</h5>
+
+    <table class="table">
+        <tr th:each="p : ${lowStockProducts}">
+            <td th:text="${p.name}"></td>
+            <td th:text="${p.stock}"></td>
+            <td th:text="${p.category != null ? p.category.name : '-'}"></td>
+        </tr>
+    </table>
+
 </div>
 
 </body>
