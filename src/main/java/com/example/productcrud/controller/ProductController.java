@@ -13,10 +13,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,64 +39,37 @@ public class ProductController {
         if (userDetails == null) {
             throw new RuntimeException("User belum login");
         }
-
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
     }
 
-    // =========================
-    // DASHBOARD (HOME)
-    // =========================
     @GetMapping("/")
     public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-
-        if (userDetails == null) {
-            return "redirect:/login";
-        }
-
+        if (userDetails == null) return "redirect:/login";
         User currentUser = getCurrentUser(userDetails);
 
+        // Menggunakan unpaged() untuk dashboard agar semua data terhitung
         Page<Product> page = productService.findAllByOwner(currentUser, Pageable.unpaged());
         List<Product> products = page.getContent();
 
-        long totalProduk = page.getTotalElements();
-
-        double inventoryValue = products.stream()
-                .mapToDouble(p -> p.getPrice() * p.getStock())
-                .sum();
-
-        long aktif = products.stream()
-                .filter(Product::isActive)
-                .count();
-
-        long nonAktif = totalProduk - aktif;
-
-        List<Product> lowStock = products.stream()
-                .filter(p -> p.getStock() < 5)
-                .toList();
-
-        model.addAttribute("totalProduk", totalProduk);
-        model.addAttribute("inventoryValue", inventoryValue);
-        model.addAttribute("aktif", aktif);
-        model.addAttribute("nonAktif", nonAktif);
-        model.addAttribute("lowStockProducts", lowStock);
+        model.addAttribute("totalProduk", page.getTotalElements());
+        model.addAttribute("inventoryValue", products.stream().mapToDouble(p -> p.getPrice() * p.getStock()).sum());
+        model.addAttribute("aktif", products.stream().filter(Product::isActive).count());
+        model.addAttribute("nonAktif", page.getTotalElements() - products.stream().filter(Product::isActive).count());
+        model.addAttribute("lowStockProducts", products.stream().filter(p -> p.getStock() < 5).toList());
 
         return "dashboard";
     }
 
-    // =========================
-    // LIST PRODUCT
-    // =========================
     @GetMapping("/products")
     public String listProducts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long category,
-            @PageableDefault(size = 5) Pageable pageable,
+            @PageableDefault(size = 10) Pageable pageable, // <-- Size 10 di sini
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
-
         Page<Product> products;
 
         if ((keyword != null && !keyword.isBlank()) || category != null) {
@@ -115,23 +86,15 @@ public class ProductController {
         return "product/list";
     }
 
-    // =========================
-    // CREATE
-    // =========================
     @GetMapping("/products/new")
     public String showCreateForm(Model model) {
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
-
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepository.findAll());
-
         return "product/form";
     }
 
-    // =========================
-    // SAVE (FIX CATEGORY)
-    // =========================
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
                               @RequestParam("category.id") Long categoryId,
@@ -139,10 +102,8 @@ public class ProductController {
                               RedirectAttributes redirectAttributes) {
 
         User currentUser = getCurrentUser(userDetails);
-
         Category category = categoryRepository.findById(categoryId).orElse(null);
         product.setCategory(category);
-
         product.setOwner(currentUser);
         productService.save(product);
 
@@ -150,23 +111,17 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    // =========================
-    // DELETE
-    // =========================
     @PostMapping("/products/{id}/delete")
     public String deleteProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 RedirectAttributes redirectAttributes) {
-
         User currentUser = getCurrentUser(userDetails);
-
         if (productService.findByIdAndOwner(id, currentUser).isPresent()) {
             productService.deleteByIdAndOwner(id, currentUser);
             redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil dihapus!");
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
         }
-
         return "redirect:/products";
     }
 }

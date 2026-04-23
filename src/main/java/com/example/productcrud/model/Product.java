@@ -1,9 +1,7 @@
 package com.example.productcrud.model;
 
 import java.time.LocalDate;
-
 import org.springframework.format.annotation.DateTimeFormat;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -52,6 +50,15 @@ public class Product {
         this.createdAt = createdAt;
     }
 
+    // Lifecycle callback untuk mengisi tanggal otomatis
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDate.now();
+        }
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
