@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+
+    <!-- FIX -->
+    <th:block th:replace="~{fragments/layout :: header}"></th:block>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<th:block th:replace="~{fragments/layout :: navbar}"></th:block>
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            <h2 class="mb-4">User Profile</h2>
+
+            <div th:if="${user != null}">
+                <p><strong>Nama:</strong>
+                    <span th:text="${user.fullName}"></span>
+                </p>
+
+                <p><strong>Username:</strong>
+                    <span th:text="${user.username}"></span>
+                </p>
+
+                <p><strong>Phone:</strong>
+                    <span th:text="${user.phoneNumber != null ? user.phoneNumber : '-'}"></span>
+                </p>
+
+                <p><strong>Address:</strong>
+                    <span th:text="${user.address != null ? user.address : '-'}"></span>
+                </p>
+
+                <p><strong>Bio:</strong>
+                    <span th:text="${user.bio != null ? user.bio : '-'}"></span>
+                </p>
+
+                <a href="/edit-profile" class="btn btn-primary mt-3">
+                    Edit Profile
+                </a>
+            </div>
+
+            <div th:if="${user == null}">
+                <p class="text-danger">User tidak ditemukan / belum login</p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+
+</body>
+</html>

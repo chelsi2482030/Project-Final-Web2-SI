@@ -16,6 +16,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    // 🔥 TAMBAHAN (UNTUK USER PROFILE)
+    private String fullName;
+    private String phoneNumber;
+    private String address;
+    private String bio;
+    private String profileImageUrl;
+
     public User() {
     }
 
@@ -23,6 +30,8 @@ public class User {
         this.username = username;
         this.password = password;
     }
+
+    // ================= GETTER SETTER LAMA =================
 
     public Long getId() {
         return id;
@@ -46,5 +55,47 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    // ================= GETTER SETTER TAMBAHAN =================
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

@@ -55,25 +55,49 @@
                     </a>
                 </li>
 
-
             </ul>
 
-            <!-- RIGHT MENU (LEBIH KE KANAN LAGI) -->
+            <!-- RIGHT MENU -->
             <div class="d-flex align-items-center ms-3">
 
                 <!-- JIKA LOGIN -->
-                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+                <div sec:authorize="isAuthenticated()" class="dropdown">
 
-                    <span class="text-light me-3">
+                    <!-- USER NAME -->
+                    <a class="nav-link dropdown-toggle text-light"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown">
+
                         Halo, <strong th:text="${#authentication.name}">User</strong>
-                    </span>
+                    </a>
 
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-outline-light btn-sm">
-                            Logout
-                        </button>
-                    </form>
+                    <!-- DROPDOWN MENU -->
+                    <ul class="dropdown-menu dropdown-menu-end">
 
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profile}">
+                                View Profile
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" th:href="@{/edit-profile}">
+                                Edit Profile
+                            </a>
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-item">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul>
                 </div>
 
                 <!-- JIKA BELUM LOGIN -->

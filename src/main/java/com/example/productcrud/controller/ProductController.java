@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,9 +48,12 @@ public class ProductController {
     @GetMapping("/")
     public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (userDetails == null) return "redirect:/login";
+
         User currentUser = getCurrentUser(userDetails);
 
-        // Menggunakan unpaged() untuk dashboard agar semua data terhitung
+        // bela
+        model.addAttribute("user", currentUser);
+
         Page<Product> page = productService.findAllByOwner(currentUser, Pageable.unpaged());
         List<Product> products = page.getContent();
 
@@ -66,10 +71,13 @@ public class ProductController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long category,
-            @PageableDefault(size = 10) Pageable pageable, // <-- Size 10 di sini
+            @PageableDefault(size = 10) Pageable pageable,
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
+
+        model.addAttribute("user", currentUser);
+
         Page<Product> products;
 
         if ((keyword != null && !keyword.isBlank()) || category != null) {
@@ -87,11 +95,18 @@ public class ProductController {
     }
 
     @GetMapping("/products/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+
+        User currentUser = getCurrentUser(userDetails);
+
+        model.addAttribute("user", currentUser);
+
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
+
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepository.findAll());
+
         return "product/form";
     }
 
@@ -102,9 +117,11 @@ public class ProductController {
                               RedirectAttributes redirectAttributes) {
 
         User currentUser = getCurrentUser(userDetails);
+
         Category category = categoryRepository.findById(categoryId).orElse(null);
         product.setCategory(category);
         product.setOwner(currentUser);
+
         productService.save(product);
 
         redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil disimpan!");
@@ -115,13 +132,27 @@ public class ProductController {
     public String deleteProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 RedirectAttributes redirectAttributes) {
+
         User currentUser = getCurrentUser(userDetails);
+
         if (productService.findByIdAndOwner(id, currentUser).isPresent()) {
             productService.deleteByIdAndOwner(id, currentUser);
             redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil dihapus!");
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
         }
+
         return "redirect:/products";
+    }
+
+    // 🔥 ================= TAMBAHAN PROFILE =================
+    @GetMapping("/profile")
+    public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+
+        User currentUser = getCurrentUser(userDetails);
+
+        model.addAttribute("user", currentUser);
+
+        return "profile";
     }
 }
