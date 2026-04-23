@@ -39,6 +39,7 @@ public class ProductController {
         if (userDetails == null) {
             throw new RuntimeException("User belum login");
         }
+
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
     }
@@ -46,17 +47,21 @@ public class ProductController {
     @GetMapping("/")
     public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (userDetails == null) return "redirect:/login";
+
         User currentUser = getCurrentUser(userDetails);
 
-        // Menggunakan unpaged() untuk dashboard agar semua data terhitung
         Page<Product> page = productService.findAllByOwner(currentUser, Pageable.unpaged());
         List<Product> products = page.getContent();
 
         model.addAttribute("totalProduk", page.getTotalElements());
-        model.addAttribute("inventoryValue", products.stream().mapToDouble(p -> p.getPrice() * p.getStock()).sum());
-        model.addAttribute("aktif", products.stream().filter(Product::isActive).count());
-        model.addAttribute("nonAktif", page.getTotalElements() - products.stream().filter(Product::isActive).count());
-        model.addAttribute("lowStockProducts", products.stream().filter(p -> p.getStock() < 5).toList());
+        model.addAttribute("inventoryValue",
+                products.stream().mapToDouble(p -> p.getPrice() * p.getStock()).sum());
+        model.addAttribute("aktif",
+                products.stream().filter(Product::isActive).count());
+        model.addAttribute("nonAktif",
+                page.getTotalElements() - products.stream().filter(Product::isActive).count());
+        model.addAttribute("lowStockProducts",
+                products.stream().filter(p -> p.getStock() < 5).toList());
 
         return "dashboard";
     }
@@ -66,7 +71,7 @@ public class ProductController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long category,
-            @PageableDefault(size = 10) Pageable pageable, // <-- Size 10 di sini
+            @PageableDefault(size = 10) Pageable pageable,
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
@@ -90,20 +95,28 @@ public class ProductController {
     public String showCreateForm(Model model) {
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
+
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepository.findAll());
+
         return "product/form";
     }
 
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
-                              @RequestParam("category.id") Long categoryId,
                               @AuthenticationPrincipal UserDetails userDetails,
                               RedirectAttributes redirectAttributes) {
 
         User currentUser = getCurrentUser(userDetails);
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        product.setCategory(category);
+
+        if (product.getCategory() != null && product.getCategory().getId() != null) {
+            Category category = categoryRepository
+                    .findById(product.getCategory().getId())
+                    .orElse(null);
+
+            product.setCategory(category);
+        }
+
         product.setOwner(currentUser);
         productService.save(product);
 
@@ -115,13 +128,16 @@ public class ProductController {
     public String deleteProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 RedirectAttributes redirectAttributes) {
+
         User currentUser = getCurrentUser(userDetails);
+
         if (productService.findByIdAndOwner(id, currentUser).isPresent()) {
             productService.deleteByIdAndOwner(id, currentUser);
             redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil dihapus!");
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
         }
+
         return "redirect:/products";
     }
 }
