@@ -5,6 +5,8 @@ public class RegisterRequest {
     private String username;
     private String password;
     private String confirmPassword;
+    private String fullName; // <--- TAMBAHKAN INI
+    private String email;    // <--- TAMBAHKAN INI
 
     public RegisterRequest() {
     }
@@ -32,4 +34,22 @@ public class RegisterRequest {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
+
+    // --- GETTER SETTER TAMBAHAN (TAMBAHKAN INI) ---
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    // ----------------------------------------------
 }

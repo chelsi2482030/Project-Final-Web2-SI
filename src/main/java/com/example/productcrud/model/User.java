@@ -18,6 +18,7 @@ public class User {
 
     // 🔥 TAMBAHAN (UNTUK USER PROFILE)
     private String fullName;
+    private String email; // <--- TAMBAHKAN INI
     private String phoneNumber;
     private String address;
     private String bio;
@@ -66,6 +67,16 @@ public class User {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+
+    // --- GETTER SETTER EMAIL (TAMBAHKAN INI) ---
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    // -------------------------------------------
 
     public String getPhoneNumber() {
         return phoneNumber;
