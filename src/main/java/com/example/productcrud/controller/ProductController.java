@@ -37,7 +37,6 @@ public class ProductController {
         this.categoryRepository = categoryRepository;
     }
 
-    // TAMBAHKAN INI: Untuk mencegah error 400 jika ada input string kosong (seperti tanggal atau ID)
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
@@ -77,11 +76,7 @@ public class ProductController {
                                Model model) {
         if (userDetails == null) return "redirect:/login";
         User currentUser = getCurrentUser(userDetails);
-<<<<<<< HEAD
-        model.addAttribute("user", currentUser);
 
-=======
->>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
         Page<Product> products;
         if ((keyword != null && !keyword.isBlank()) || category != null) {
             products = productService.searchProducts(currentUser, keyword, category, pageable);
@@ -99,17 +94,12 @@ public class ProductController {
 
     @GetMapping("/products/new")
     public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-<<<<<<< HEAD
-        User currentUser = getCurrentUser(userDetails);
-        model.addAttribute("user", currentUser);
-
-=======
         if (userDetails == null) return "redirect:/login";
+
         User currentUser = getCurrentUser(userDetails);
->>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
-        product.setActive(true); // Default aktif saat tambah baru
+        product.setActive(true);
 
         model.addAttribute("user", currentUser);
         model.addAttribute("product", product);
@@ -117,7 +107,6 @@ public class ProductController {
         return "product/form";
     }
 
-    // TAMBAHKAN Mapping Edit (Penting untuk fungsionalitas CRUD)
     @GetMapping("/products/edit/{id}")
     public String showEditForm(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails, Model model) {
         User currentUser = getCurrentUser(userDetails);
@@ -137,11 +126,8 @@ public class ProductController {
                               RedirectAttributes redirectAttributes) {
         if (userDetails == null) return "redirect:/login";
         User currentUser = getCurrentUser(userDetails);
-<<<<<<< HEAD
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-=======
 
-        // Validasi Kategori agar tidak error 400 jika user lupa pilih
+        // Validasi Kategori
         if (categoryId == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Silakan pilih kategori!");
             return "redirect:/products/new";
@@ -150,11 +136,9 @@ public class ProductController {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category tidak ditemukan"));
 
->>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
         product.setCategory(category);
         product.setOwner(currentUser);
 
-        // Pastikan tanggal dibuat tidak hilang saat update atau baru
         if (product.getId() == null && product.getCreatedAt() == null) {
             product.setCreatedAt(LocalDate.now());
         }
@@ -176,18 +160,17 @@ public class ProductController {
         return "redirect:/products";
     }
 
-<<<<<<< HEAD
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        User currentUser = getCurrentUser(userDetails);
-        model.addAttribute("user", currentUser);
+        if (userDetails == null) return "redirect:/login";
+        model.addAttribute("user", getCurrentUser(userDetails));
         return "profile";
     }
 
     @GetMapping("/edit-profile")
     public String editProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        User currentUser = getCurrentUser(userDetails);
-        model.addAttribute("user", currentUser);
+        if (userDetails == null) return "redirect:/login";
+        model.addAttribute("user", getCurrentUser(userDetails));
         return "edit-profile";
     }
 
@@ -198,53 +181,17 @@ public class ProductController {
                                 @RequestParam(required = false) String phoneNumber,
                                 @RequestParam(required = false) String address,
                                 @RequestParam(required = false) String bio,
-                                @RequestParam(required = false) String profileImageUrl, // 🔥 TAMBAHAN
+                                @RequestParam(required = false) String profileImageUrl,
                                 RedirectAttributes redirectAttributes) {
-
         User currentUser = getCurrentUser(userDetails);
 
-        // Set data baru
         currentUser.setFullName(fullName);
         currentUser.setEmail(email);
         currentUser.setPhoneNumber(phoneNumber);
         currentUser.setAddress(address);
         currentUser.setBio(bio);
-        currentUser.setProfileImageUrl(profileImageUrl); // 🔥 TAMBAHAN
+        currentUser.setProfileImageUrl(profileImageUrl);
 
-        // Simpan ke database
-        userRepository.save(currentUser);
-
-        redirectAttributes.addFlashAttribute("successMessage", "Profile berhasil diupdate!");
-        return "redirect:/profile";
-=======
-    // Metode profile tetap sama...
-    @GetMapping("/profile")
-    public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        if (userDetails == null) return "redirect:/login";
-        model.addAttribute("user", getCurrentUser(userDetails));
-        return "profile";
->>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
-    }
-
-    @GetMapping("/edit-profile")
-    public String editProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        if (userDetails == null) return "redirect:/login";
-        model.addAttribute("user", getCurrentUser(userDetails));
-        return "edit-profile";
-    }
-
-    @PostMapping("/edit-profile")
-    public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-                                @RequestParam(required = false) String fullName,
-                                @RequestParam(required = false) String phoneNumber,
-                                @RequestParam(required = false) String address,
-                                @RequestParam(required = false) String bio,
-                                RedirectAttributes redirectAttributes) {
-        User currentUser = getCurrentUser(userDetails);
-        currentUser.setFullName(fullName);
-        currentUser.setPhoneNumber(phoneNumber);
-        currentUser.setAddress(address);
-        currentUser.setBio(bio);
         userRepository.save(currentUser);
         redirectAttributes.addFlashAttribute("successMessage", "Profile berhasil diupdate!");
         return "redirect:/profile";
