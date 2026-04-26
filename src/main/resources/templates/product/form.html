@@ -16,6 +16,7 @@
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{createdAt}">
 
+                <!-- Input hidden untuk mengirim angka bersih ke Java -->
                 <input type="hidden" id="priceReal" th:field="*{price}">
 
                 <div class="mb-3">
@@ -25,11 +26,13 @@
 
                 <div class="mb-3">
                     <label class="form-label">Kategori</label>
-                    <select th:field="*{category.id}" class="form-select" required>
+                    <!-- PERBAIKAN: Gunakan name="categoryId" agar cocok dengan @RequestParam di Controller -->
+                    <select name="categoryId" class="form-select" required>
                         <option value="">-- Pilih Kategori --</option>
                         <option th:each="cat : ${categories}"
                                 th:value="${cat.id}"
-                                th:text="${cat.name}">
+                                th:text="${cat.name}"
+                                th:selected="${product.category != null && product.category.id == cat.id}">
                         </option>
                     </select>
                 </div>
@@ -38,6 +41,7 @@
                     <label class="form-label">Harga</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
+                        <!-- Tetap tanpa atribut 'name' agar tidak error format titik ke Java -->
                         <input type="text"
                                id="priceDisplay"
                                class="form-control"
@@ -89,13 +93,8 @@
 
     // Jalankan setiap kali user mengetik harga
     priceDisplay.addEventListener('input', function () {
-        // Hapus semua karakter kecuali angka
         let raw = this.value.replace(/\D/g, '');
-
-        // Update input hidden yang akan dikirim ke Spring (angka bersih)
         priceHidden.value = raw;
-
-        // Update tampilan di layar dengan titik ribuan
         this.value = raw ? formatRupiah(raw) : '';
     });
 </script>
