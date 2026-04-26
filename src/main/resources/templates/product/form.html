@@ -5,96 +5,69 @@
 <body>
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
 
-            <!-- TITLE -->
-            <h2 class="mb-4"
-                th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'">
-            </h2>
+            <h2 class="mb-4" th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'"></h2>
 
-            <!-- FORM -->
             <form th:action="@{/products/save}" th:object="${product}" method="post">
 
-                <!-- hidden -->
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{createdAt}">
-                <input type="hidden" th:field="*{price}">
 
-                <!-- NAMA -->
+                <!-- Input hidden untuk mengirim angka bersih ke Java -->
+                <input type="hidden" id="priceReal" th:field="*{price}">
+
                 <div class="mb-3">
                     <label class="form-label">Nama Produk</label>
-                    <input type="text"
-                           class="form-control"
-                           th:field="*{name}"
-                           placeholder="Masukkan nama produk"
-                           required>
+                    <input type="text" class="form-control" th:field="*{name}" required>
                 </div>
 
-                <!-- CATEGORY (FIX PENTING) -->
                 <div class="mb-3">
                     <label class="form-label">Kategori</label>
-                    <select class="form-select" name="category.id" required>
-
+                    <!-- PERBAIKAN: Gunakan name="categoryId" agar cocok dengan @RequestParam di Controller -->
+                    <select name="categoryId" class="form-select" required>
                         <option value="">-- Pilih Kategori --</option>
-
                         <option th:each="cat : ${categories}"
                                 th:value="${cat.id}"
                                 th:text="${cat.name}"
-                                th:selected="${product.category != null && cat.id == product.category.id}">
+                                th:selected="${product.category != null && product.category.id == cat.id}">
                         </option>
-
                     </select>
                 </div>
 
-                <!-- HARGA -->
                 <div class="mb-3">
                     <label class="form-label">Harga</label>
-
-                    <input type="text"
-                           id="priceDisplay"
-                           class="form-control"
-                           placeholder="Masukkan harga"
-                           required>
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        <!-- Tetap tanpa atribut 'name' agar tidak error format titik ke Java -->
+                        <input type="text"
+                               id="priceDisplay"
+                               class="form-control"
+                               placeholder="Contoh: 10.000"
+                               required>
+                    </div>
                 </div>
 
-                <!-- STOK -->
                 <div class="mb-3">
                     <label class="form-label">Stok</label>
-                    <input type="number"
-                           class="form-control"
-                           th:field="*{stock}"
-                           min="0"
-                           required>
+                    <input type="number" class="form-control" th:field="*{stock}" min="0" required>
                 </div>
 
-                <!-- DESKRIPSI -->
                 <div class="mb-3">
                     <label class="form-label">Deskripsi</label>
-                    <textarea class="form-control"
-                              th:field="*{description}"
-                              rows="3">
-                    </textarea>
+                    <textarea class="form-control" th:field="*{description}" rows="3"></textarea>
                 </div>
 
-                <!-- STATUS -->
                 <div class="mb-3 form-check">
-                    <input type="checkbox"
-                           class="form-check-input"
-                           th:field="*{active}">
-                    <label class="form-check-label">Produk Aktif</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{active}" id="activeStatus">
+                    <label class="form-check-label" for="activeStatus">Produk Aktif</label>
                 </div>
 
-                <!-- BUTTON -->
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">
-                        Simpan
-                    </button>
-
-                    <a th:href="@{/products}" class="btn btn-secondary">
-                        Batal
-                    </a>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <a th:href="@{/products}" class="btn btn-secondary">Batal</a>
                 </div>
 
             </form>
@@ -104,26 +77,24 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
-<!-- SCRIPT FORMAT HARGA -->
 <script>
-    const priceHidden = document.querySelector('input[name="price"]');
+    const priceHidden = document.getElementById('priceReal');
     const priceDisplay = document.getElementById('priceDisplay');
 
     function formatRupiah(value) {
+        if (!value) return '';
         return new Intl.NumberFormat('id-ID').format(value);
     }
 
-    // SET VALUE SAAT EDIT
+    // Jalankan saat halaman dimuat (untuk mode Edit)
     if (priceHidden && priceHidden.value) {
         priceDisplay.value = formatRupiah(priceHidden.value);
     }
 
-    // HANDLE INPUT
+    // Jalankan setiap kali user mengetik harga
     priceDisplay.addEventListener('input', function () {
         let raw = this.value.replace(/\D/g, '');
-
-        priceHidden.value = raw || 0;
-
+        priceHidden.value = raw;
         this.value = raw ? formatRupiah(raw) : '';
     });
 </script>

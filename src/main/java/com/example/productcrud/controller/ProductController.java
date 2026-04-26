@@ -10,6 +10,7 @@ import com.example.productcrud.service.ProductService;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -17,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,6 +37,12 @@ public class ProductController {
         this.categoryRepository = categoryRepository;
     }
 
+    // TAMBAHKAN INI: Untuk mencegah error 400 jika ada input string kosong (seperti tanggal atau ID)
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+
     private User getCurrentUser(UserDetails userDetails) {
         if (userDetails == null) {
             throw new RuntimeException("User belum login");
@@ -46,7 +54,6 @@ public class ProductController {
     @GetMapping("/")
     public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (userDetails == null) return "redirect:/login";
-
         User currentUser = getCurrentUser(userDetails);
         model.addAttribute("user", currentUser);
 
@@ -63,16 +70,18 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public String listProducts(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Long category,
-            @PageableDefault(size = 10) Pageable pageable,
-            Model model) {
-
+    public String listProducts(@AuthenticationPrincipal UserDetails userDetails,
+                               @RequestParam(required = false) String keyword,
+                               @RequestParam(required = false) Long category,
+                               @PageableDefault(size = 10) Pageable pageable,
+                               Model model) {
+        if (userDetails == null) return "redirect:/login";
         User currentUser = getCurrentUser(userDetails);
+<<<<<<< HEAD
         model.addAttribute("user", currentUser);
 
+=======
+>>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
         Page<Product> products;
         if ((keyword != null && !keyword.isBlank()) || category != null) {
             products = productService.searchProducts(currentUser, keyword, category, pageable);
@@ -80,41 +89,77 @@ public class ProductController {
             products = productService.findAllByOwner(currentUser, pageable);
         }
 
+        model.addAttribute("user", currentUser);
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("keyword", keyword);
         model.addAttribute("selectedCategory", category);
-
         return "product/list";
     }
 
     @GetMapping("/products/new")
     public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+<<<<<<< HEAD
         User currentUser = getCurrentUser(userDetails);
         model.addAttribute("user", currentUser);
 
+=======
+        if (userDetails == null) return "redirect:/login";
+        User currentUser = getCurrentUser(userDetails);
+>>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
+        product.setActive(true); // Default aktif saat tambah baru
 
+        model.addAttribute("user", currentUser);
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepository.findAll());
+        return "product/form";
+    }
 
+    // TAMBAHKAN Mapping Edit (Penting untuk fungsionalitas CRUD)
+    @GetMapping("/products/edit/{id}")
+    public String showEditForm(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails, Model model) {
+        User currentUser = getCurrentUser(userDetails);
+        Product product = productService.findByIdAndOwner(id, currentUser)
+                .orElseThrow(() -> new RuntimeException("Produk tidak ditemukan"));
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("product", product);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "product/form";
     }
 
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute Product product,
-                              @RequestParam("category.id") Long categoryId,
+                              @RequestParam(value = "categoryId", required = false) Long categoryId,
                               @AuthenticationPrincipal UserDetails userDetails,
                               RedirectAttributes redirectAttributes) {
-
+        if (userDetails == null) return "redirect:/login";
         User currentUser = getCurrentUser(userDetails);
+<<<<<<< HEAD
         Category category = categoryRepository.findById(categoryId).orElse(null);
+=======
+
+        // Validasi Kategori agar tidak error 400 jika user lupa pilih
+        if (categoryId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Silakan pilih kategori!");
+            return "redirect:/products/new";
+        }
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category tidak ditemukan"));
+
+>>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
         product.setCategory(category);
         product.setOwner(currentUser);
 
-        productService.save(product);
+        // Pastikan tanggal dibuat tidak hilang saat update atau baru
+        if (product.getId() == null && product.getCreatedAt() == null) {
+            product.setCreatedAt(LocalDate.now());
+        }
 
+        productService.save(product);
         redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil disimpan!");
         return "redirect:/products";
     }
@@ -123,18 +168,15 @@ public class ProductController {
     public String deleteProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 RedirectAttributes redirectAttributes) {
-
         User currentUser = getCurrentUser(userDetails);
         if (productService.findByIdAndOwner(id, currentUser).isPresent()) {
             productService.deleteByIdAndOwner(id, currentUser);
             redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil dihapus!");
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
         }
-
         return "redirect:/products";
     }
 
+<<<<<<< HEAD
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User currentUser = getCurrentUser(userDetails);
@@ -172,6 +214,38 @@ public class ProductController {
         // Simpan ke database
         userRepository.save(currentUser);
 
+        redirectAttributes.addFlashAttribute("successMessage", "Profile berhasil diupdate!");
+        return "redirect:/profile";
+=======
+    // Metode profile tetap sama...
+    @GetMapping("/profile")
+    public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        if (userDetails == null) return "redirect:/login";
+        model.addAttribute("user", getCurrentUser(userDetails));
+        return "profile";
+>>>>>>> 9f02b6f13178e7dd6b954928fd4b91d12f57f3e9
+    }
+
+    @GetMapping("/edit-profile")
+    public String editProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        if (userDetails == null) return "redirect:/login";
+        model.addAttribute("user", getCurrentUser(userDetails));
+        return "edit-profile";
+    }
+
+    @PostMapping("/edit-profile")
+    public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                @RequestParam(required = false) String fullName,
+                                @RequestParam(required = false) String phoneNumber,
+                                @RequestParam(required = false) String address,
+                                @RequestParam(required = false) String bio,
+                                RedirectAttributes redirectAttributes) {
+        User currentUser = getCurrentUser(userDetails);
+        currentUser.setFullName(fullName);
+        currentUser.setPhoneNumber(phoneNumber);
+        currentUser.setAddress(address);
+        currentUser.setBio(bio);
+        userRepository.save(currentUser);
         redirectAttributes.addFlashAttribute("successMessage", "Profile berhasil diupdate!");
         return "redirect:/profile";
     }
