@@ -154,6 +154,26 @@ public class ProductController {
         return "redirect:/products";
     }
 
+
+    @GetMapping("/products/{id}")
+    public String viewProduct(@PathVariable Long id,
+                              @AuthenticationPrincipal UserDetails userDetails,
+                              Model model) {
+        if (userDetails == null) return "redirect:/login";
+
+        User currentUser = getCurrentUser(userDetails);
+
+        // Mengambil produk berdasarkan ID dan memastikan produk milik user yang sedang login
+        Product product = productService.findByIdAndOwner(id, currentUser)
+                .orElseThrow(() -> new RuntimeException("Produk tidak ditemukan"));
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("product", product);
+
+        return "product/detail"; // Pastikan file HTML Anda berada di templates/product/detail.html
+    }
+
+
     @PostMapping("/products/{id}/delete")
     public String deleteProduct(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,

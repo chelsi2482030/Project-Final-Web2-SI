@@ -1,94 +1,94 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header}">
-</head>
-<style>
-    /* CSS untuk membuat kotak seragam dan ada bayangan saat disentuh */
-    .dashboard-card {
-        min-height: 140px; /* Memastikan tinggi kotak sama */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        transition: all 0.3s ease; /* Animasi halus */
-        border: 1px solid #ddd;
-        border-radius: 10px;
-    }
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: header}">
+    </head>
+    <style>
+        /* CSS untuk membuat kotak seragam dan ada bayangan saat disentuh */
+        .dashboard-card {
+            min-height: 140px; /* Memastikan tinggi kotak sama */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease; /* Animasi halus */
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
 
-    .dashboard-card:hover {
-        transform: translateY(-5px); /* Kotak naik sedikit */
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Efek bayangan */
-        cursor: pointer;
-        border-color: #007bff;
-    }
+        .dashboard-card:hover {
+            transform: translateY(-5px); /* Kotak naik sedikit */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Efek bayangan */
+            cursor: pointer;
+            border-color: #007bff;
+        }
 
-    .card-title-custom {
-        color: #6c757d;
-        font-size: 0.9rem;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-</style>
-<body>
+        .card-title-custom {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    </style>
+    <body>
 
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="container mt-4">
-    <h2 class="mb-4">Dashboard Overview</h2>
+    <div class="container mt-4">
+        <h2 class="mb-4">Dashboard Overview</h2>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card dashboard-card p-4 shadow-sm">
-                <div class="card-title-custom">Total Produk</div>
-                <h2 class="fw-bold mb-0" th:text="${totalProduk}">0</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card dashboard-card p-4 shadow-sm">
+                    <div class="card-title-custom">Total Produk</div>
+                    <h2 class="fw-bold mb-0" th:text="${totalProduk}">0</h2>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card dashboard-card p-4 shadow-sm">
-                <div class="card-title-custom">Inventory Value</div>
-                <h2 class="fw-bold mb-0">
-                    Rp <span th:text="${#numbers.formatDecimal(inventoryValue, 0, 'POINT', 0, 'COMMA')}">0</span>
-                </h2>
+            <div class="col-md-4 mb-4">
+                <div class="card dashboard-card p-4 shadow-sm">
+                    <div class="card-title-custom">Inventory Value</div>
+                    <h2 class="fw-bold mb-0">
+                        Rp <span th:text="${#numbers.formatDecimal(inventoryValue, 0, 'POINT', 0, 'COMMA')}">0</span>
+                    </h2>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card dashboard-card p-4 shadow-sm">
-                <div class="card-title-custom">Status</div>
-                <div class="mt-2">
-                    <span class="text-success fw-bold" th:text="${aktif}">0</span> Aktif |
-                    <span class="text-danger fw-bold" th:text="${nonAktif}">0</span> Nonaktif
+            <div class="col-md-4 mb-4">
+                <div class="card dashboard-card p-4 shadow-sm">
+                    <div class="card-title-custom">Status</div>
+                    <div class="mt-2">
+                        <span class="text-success fw-bold" th:text="${aktif}">0</span> Aktif |
+                        <span class="text-danger fw-bold" th:text="${nonAktif}">0</span> Nonaktif
+                    </div>
                 </div>
             </div>
         </div>
+
+        <hr class="my-5">
+
+        <h5 class="mb-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Stok Menipis</h5>
+
+        <div class="card shadow-sm">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Nama Produk</th>
+                    <th>Stok</th>
+                    <th>Kategori</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${lowStockProducts}">
+                    <td th:text="${p.name}"></td>
+                    <td class="text-danger fw-bold" th:text="${p.stock}"></td>
+                    <td th:text="${p.categories != null ? p.categories.name : '-'}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(lowStockProducts)}">
+                    <td colspan="3" class="text-center text-muted">Tidak ada produk dengan stok menipis</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <hr class="my-5">
-
-    <h5 class="mb-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Stok Menipis</h5>
-
-    <div class="card shadow-sm">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-            <tr>
-                <th>Nama Produk</th>
-                <th>Stok</th>
-                <th>Kategori</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="p : ${lowStockProducts}">
-                <td th:text="${p.name}"></td>
-                <td class="text-danger fw-bold" th:text="${p.stock}"></td>
-                <td th:text="${p.categories != null ? p.categories.name : '-'}"></td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(lowStockProducts)}">
-                <td colspan="3" class="text-center text-muted">Tidak ada produk dengan stok menipis</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-</body>
-</html>
+    </body>
+    </html>

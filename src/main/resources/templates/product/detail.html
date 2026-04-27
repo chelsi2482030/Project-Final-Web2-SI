@@ -19,7 +19,7 @@
                             </tr>
                             <tr>
                                 <th class="text-muted">Kategori</th>
-                                <td th:text="${product.categories?.displayName}">-</td>
+                                <td th:text="${product.categories?.name}">-</td>
                             </tr>
                             <tr>
                                 <th class="text-muted">Harga</th>
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="d-flex gap-2 mt-4">
-                    <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-warning">Edit</a>
+                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">Edit</a>
                     <a th:href="@{/products}" class="btn btn-secondary">Kembali ke Daftar</a>
                 </div>
             </div>
