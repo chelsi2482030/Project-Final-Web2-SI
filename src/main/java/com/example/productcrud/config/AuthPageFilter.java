@@ -16,17 +16,27 @@ import java.util.Set;
 @Component
 public class AuthPageFilter extends OncePerRequestFilter {
 
-    private static final Set<String> AUTH_PAGES = Set.of("/login", "/register");
+    // TAMBAHKAN JALUR BARU DI SINI, LEK!
+    private static final Set<String> AUTH_PAGES = Set.of(
+            "/login",
+            "/register",
+            "/forgot-password",
+            "/reset-password"
+    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        if (AUTH_PAGES.contains(request.getRequestURI())) {
+
+        String requestURI = request.getRequestURI();
+
+        if (AUTH_PAGES.contains(requestURI)) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null
                     && authentication.isAuthenticated()
                     && !(authentication instanceof AnonymousAuthenticationToken)) {
+
                 response.sendRedirect("/products");
                 return;
             }
