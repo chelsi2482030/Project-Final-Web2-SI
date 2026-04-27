@@ -1,6 +1,6 @@
 package com.example.productcrud.controller;
 
-import com.example.productcrud.model.Category;
+import com.example.productcrud.model.Categories;
 import com.example.productcrud.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,15 +24,15 @@ public class CategoryController {
 
     @GetMapping("/add")
     public String addForm(Model model) {
-        model.addAttribute("category", new Category());
+        model.addAttribute("categories", new Categories());
         return "category/add";
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("category") Category category,
+    public String save(@ModelAttribute("categories") Categories categories,
                        Model model) {
         try {
-            categoryService.save(category);
+            categoryService.save(categories);
             return "redirect:/categories";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -43,7 +43,7 @@ public class CategoryController {
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable("id") Long id, Model model) {
         try {
-            model.addAttribute("category", categoryService.findById(id));
+            model.addAttribute("categories", categoryService.findById(id));
             return "category/edit";
         } catch (Exception e) {
             return "redirect:/categories";
@@ -51,10 +51,10 @@ public class CategoryController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute("category") Category category,
+    public String update(@ModelAttribute("categories") Categories categories,
                          Model model) {
         try {
-            categoryService.save(category);
+            categoryService.save(categories);
             return "redirect:/categories";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());

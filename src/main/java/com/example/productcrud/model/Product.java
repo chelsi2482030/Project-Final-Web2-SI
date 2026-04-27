@@ -16,12 +16,15 @@ public class Product {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "category_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_product_categories"))
+    private Categories categories;
 
-    private long price;
+    // Perubahan: long -> Long
+    private Long price;
 
-    private int stock;
+    // Perubahan: int -> Integer
+    private Integer stock;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -38,11 +41,12 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String name, Category category, long price, int stock,
+    // Perubahan: Constructor disesuaikan dengan tipe data baru
+    public Product(Long id, String name, Categories categories, Long price, Integer stock,
                    String description, boolean active, LocalDate createdAt) {
         this.id = id;
         this.name = name;
-        this.category = category;
+        this.categories = categories;
         this.price = price;
         this.stock = stock;
         this.description = description;
@@ -75,27 +79,29 @@ public class Product {
         this.name = name;
     }
 
-    public Category getCategory() {
-        return category;
+    public Categories getCategories() { // Sebelumnya getCategory
+        return categories;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategories(Categories categories) { // Sebelumnya setCategory
+        this.categories = categories;
     }
 
-    public long getPrice() {
+    // Perubahan: Getter & Setter disesuaikan
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 
-    public int getStock() {
+    // Perubahan: Getter & Setter disesuaikan
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 

@@ -80,7 +80,7 @@ Buka http://localhost:8080
 Jalankan SQL berikut di database untuk mengisi data awal:
 
 ```sql
-INSERT INTO products (name, category, price, stock, description, active, created_at) VALUES
+INSERT INTO products (name, categories, price, stock, description, active, created_at) VALUES
 ('Laptop ASUS ROG', 'ELEKTRONIK', 18500000, 8, 'Laptop gaming ASUS ROG dengan prosesor terbaru dan kartu grafis RTX', true, '2025-01-15'),
 ('Mouse Logitech MX Master', 'ELEKTRONIK', 1200000, 35, 'Mouse wireless ergonomis dengan sensor presisi tinggi', true, '2025-02-10'),
 ('Buku Java Programming', 'BUKU', 150000, 30, 'Buku panduan lengkap pemrograman Java dari dasar hingga mahir', true, '2025-03-05'),

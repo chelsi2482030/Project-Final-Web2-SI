@@ -1,6 +1,6 @@
 package com.example.productcrud.service;
 
-import com.example.productcrud.model.Category;
+import com.example.productcrud.model.Categories;
 import com.example.productcrud.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,30 +15,30 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> findAll() {
+    public List<Categories> findAll() {
         return categoryRepository.findAll();
     }
 
-    public Category findById(Long id) {
+    public Categories findById(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category tidak ditemukan"));
     }
 
-    public void save(Category category) {
-        if (category.getName() == null || category.getName().isBlank()) {
+    public void save(Categories categories) {
+        if (categories.getName() == null || categories.getName().isBlank()) {
             throw new RuntimeException("Nama kategori wajib diisi");
         }
-        categoryRepository.save(category);
+        categoryRepository.save(categories);
     }
 
     public void delete(Long id) {
-        Category category = findById(id);
+        Categories categories = findById(id);
 
         // 🔥 CEGAH DELETE kalau masih dipakai product
-        if (category.getProducts() != null && !category.getProducts().isEmpty()) {
+        if (categories.getProducts() != null && !categories.getProducts().isEmpty()) {
             throw new RuntimeException("Kategori masih digunakan oleh produk!");
         }
 
-        categoryRepository.delete(category);
+        categoryRepository.delete(categories);
     }
 }

@@ -80,7 +80,7 @@
             <tr th:each="p : ${lowStockProducts}">
                 <td th:text="${p.name}"></td>
                 <td class="text-danger fw-bold" th:text="${p.stock}"></td>
-                <td th:text="${p.category != null ? p.category.name : '-'}"></td>
+                <td th:text="${p.categories != null ? p.categories.name : '-'}"></td>
             </tr>
             <tr th:if="${#lists.isEmpty(lowStockProducts)}">
                 <td colspan="3" class="text-center text-muted">Tidak ada produk dengan stok menipis</td>

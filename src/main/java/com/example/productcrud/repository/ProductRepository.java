@@ -34,7 +34,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         SELECT p FROM Product p
         WHERE p.owner = :owner
         AND (:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
-        AND (:categoryId IS NULL OR p.category.id = :categoryId)
+        AND (:categoryId IS NULL OR p.categories.id = :categoryId)
     """)
     Page<Product> searchAndFilterByOwner(
             @Param("owner") User owner,

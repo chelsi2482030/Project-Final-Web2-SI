@@ -18,7 +18,7 @@
             <input type="text" name="keyword" class="form-control" placeholder="Cari produk..." th:value="${keyword}">
         </div>
         <div class="col-md-3">
-            <select name="category" class="form-select">
+            <select name="categories" class="form-select">
                 <option value="">Semua Kategori</option>
                 <option th:each="cat : ${categories}"
                         th:value="${cat.id}"
@@ -51,7 +51,7 @@
             <tr th:each="product, iter : ${products.content}">
                 <td th:text="${(products.number * products.size) + iter.index + 1}"></td>
                 <td th:text="${product.name}"></td>
-                <td th:text="${product.category != null ? product.category.name : '-'}"></td>
+                <td th:text="${product.categories != null ? product.categories.name : '-'}"></td>
                 <td th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}"></td>
                 <td th:text="${product.stock}"></td>
                 <td>
@@ -60,7 +60,7 @@
                 </td>
                 <td>
                     <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-info btn-sm">Detail</a>
-                    <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-warning btn-sm">Edit</a>
+                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning btn-sm">Edit</a>
                     <form th:action="@{/products/{id}/delete(id=${product.id})}" method="post" style="display:inline;" onsubmit="return confirm('Yakin hapus?');">
                         <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                     </form>
@@ -72,14 +72,14 @@
         <nav aria-label="Page navigation" class="mt-4">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${products.first} ? 'disabled'">
-                    <a class="page-link" th:href="@{/products(page=${products.number - 1}, keyword=${keyword}, category=${selectedCategory})}">Previous</a>
+                    <a class="page-link" th:href="@{/products(page=${products.number - 1}, keyword=${keyword}, categories=${selectedCategory})}">Previous</a>
                 </li>
                 <li class="page-item" th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}"
                     th:classappend="${i == products.number} ? 'active'">
-                    <a class="page-link" th:href="@{/products(page=${i}, keyword=${keyword}, category=${selectedCategory})}" th:text="${i + 1}">1</a>
+                    <a class="page-link" th:href="@{/products(page=${i}, keyword=${keyword}, categories=${selectedCategory})}" th:text="${i + 1}">1</a>
                 </li>
                 <li class="page-item" th:classappend="${products.last} ? 'disabled'">
-                    <a class="page-link" th:href="@{/products(page=${products.number + 1}, keyword=${keyword}, category=${selectedCategory})}">Next</a>
+                    <a class="page-link" th:href="@{/products(page=${products.number + 1}, keyword=${keyword}, categories=${selectedCategory})}">Next</a>
                 </li>
             </ul>
         </nav>

@@ -2,7 +2,7 @@ package com.example.productcrud.controller;
 
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
-import com.example.productcrud.model.Category;
+import com.example.productcrud.model.Categories;
 import com.example.productcrud.repository.UserRepository;
 import com.example.productcrud.repository.CategoryRepository;
 import com.example.productcrud.service.ProductService;
@@ -71,15 +71,15 @@ public class ProductController {
     @GetMapping("/products")
     public String listProducts(@AuthenticationPrincipal UserDetails userDetails,
                                @RequestParam(required = false) String keyword,
-                               @RequestParam(required = false) Long category,
+                               @RequestParam(required = false) Long categories,
                                @PageableDefault(size = 10) Pageable pageable,
                                Model model) {
         if (userDetails == null) return "redirect:/login";
         User currentUser = getCurrentUser(userDetails);
 
         Page<Product> products;
-        if ((keyword != null && !keyword.isBlank()) || category != null) {
-            products = productService.searchProducts(currentUser, keyword, category, pageable);
+        if ((keyword != null && !keyword.isBlank()) || categories != null) {
+            products = productService.searchProducts(currentUser, keyword, categories, pageable);
         } else {
             products = productService.findAllByOwner(currentUser, pageable);
         }
@@ -88,7 +88,7 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("keyword", keyword);
-        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedCategory", categories);
         return "product/list";
     }
 
@@ -124,6 +124,8 @@ public class ProductController {
                               @RequestParam(value = "categoryId", required = false) Long categoryId,
                               @AuthenticationPrincipal UserDetails userDetails,
                               RedirectAttributes redirectAttributes) {
+
+
         if (userDetails == null) return "redirect:/login";
         User currentUser = getCurrentUser(userDetails);
 
@@ -133,15 +135,19 @@ public class ProductController {
             return "redirect:/products/new";
         }
 
-        Category category = categoryRepository.findById(categoryId)
+
+
+        Categories categories = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category tidak ditemukan"));
 
-        product.setCategory(category);
+        product.setCategories(categories);
         product.setOwner(currentUser);
 
         if (product.getId() == null && product.getCreatedAt() == null) {
             product.setCreatedAt(LocalDate.now());
         }
+
+
 
         productService.save(product);
         redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil disimpan!");

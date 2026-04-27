@@ -5,7 +5,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
-public class Category {
+public class Categories {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class Category {
     private String description;
 
     // 🔥 TAMBAHAN RELASI
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL)
     private List<Product> products;
 
     // Getter & Setter

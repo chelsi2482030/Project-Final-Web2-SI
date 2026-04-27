@@ -56,7 +56,8 @@ public class ProductService {
     // SAVE
     // =========================
     public Product save(Product product) {
-        return productRepository.save(product);
+        System.out.println(product);
+         return productRepository.save(product);
     }
 
     // =========================
